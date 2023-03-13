@@ -54,11 +54,28 @@ const createArtist = async (req, res) => {
     }
   }
 
+  const deleteArtist = async (req, res) => {
+    const { id } = req.params
+  
+    try {
+      const { rows } = await db.query('DELETE FROM Artists WHERE id = $1 RETURNING *', [id])
+  
+      if (rows.length === 0) {
+        res.status(404).json({ message: `artist ${id} does not exist` })
+      } else {
+        res.json(rows[0])
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
+  }
 
 
 module.exports = {
     readArtist,
     createArtist,
     getArtistById,
-    putArtist
+    putArtist,
+    deleteArtist
 }
